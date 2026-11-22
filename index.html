@@ -1,1 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VayuShield — Urban Air Quality & Winter Smog Assistant</title>
+  <style>
+    :root {
+      --bg: #07111b;
+      --surface: #0e1c2b;
+      --surface-2: #15283d;
+      --border: #25405c;
+      --text: #eef5fc;
+      --muted: #9bb3c9;
+      --accent: #38bdf8;
+      --accent-2: #2dd4bf;
+      --good: #22c55e;
+      --moderate: #eab308;
+      --poor: #f97316;
+      --severe: #ef4444;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at top right, #112942 0%, var(--bg) 55%);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--accent);
+      color: #03101c;
+      padding: 8px 14px;
+      font-weight: 700;
+      z-index: 1000;
+      border-radius: 0 0 8px 0;
+    }
+
+    .skip-link:focus {
+      left: 0;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 20px 16px 48px;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: grid;
+      place-items: center;
+      color: #04121e;
+      font-weight: 900;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.35rem, 2.6vw, 1.9rem);
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button, select, input {
+      font: inherit;
+      color: var(--text);
+    }
+
+    .btn {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 9px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: transform 0.12s ease, background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+      background: #1b344f;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn:focus-visible,
+    select:focus-visible,
+    input:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #041320;
+      border: none;
+      font-weight: 700;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.06);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 1.12rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .field {
+      margin-bottom: 13px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #cfe0ef;
+    }
+
+    .row-inline {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row-inline > * {
+      flex: 1 1 140px;
+    }
+
+    select, input[type="number"], input[type="password"] {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 11px;
+    }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .chip input {
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .aqi-banner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      margin-top: 10px;
+    }
+
+    .aqi-number {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .status-pill {
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #061018;
+      display: inline-block;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .metric-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .metric-label {
+      font-size: 0.76rem;
+      color: var(--muted);
+    }
+
+    .metric-val {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .plan-section {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .plan-section h3 {
+      margin: 0 0 8px;
+      font-size: 0.98rem;
+      color: var(--accent);
+    }
+
+    ul.clean-list {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    ul.clean-list li {
+      margin-bottom: 6px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+
+    .checklist-item input {
+      margin-top: 3px;
+      accent-color: var(--accent-2);
+      cursor: pointer;
+    }
+
+    .checklist-item.done span {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+
+    .progress-wrap {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      height: 12px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      width: 0%;
+      transition: width 0.25s ease;
+    }
+
+    .helper-text {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .error-text {
+      color: #fca5a5;
+      font-size: 0.84rem;
+      margin-top: 5px;
+      min-height: 1.2em;
+    }
+
+    .badge-mode {
+      font-size: 0.76rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    dialog {
+      max-width: 680px;
+      width: calc(100% - 24px);
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    dialog::backdrop {
+      background: rgba(2, 6, 12, 0.72);
+    }
+
+    .dialog-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .dialog-head h2 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .test-pass {
+      color: #86efac;
+      font-weight: 600;
+    }
+
+    .test-fail {
+      color: #fca5a5;
+      font-weight: 700;
+    }
+
+    footer {
+      margin-top: 28px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.84rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    @media (max-width: 520px) {
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="brand-badge" aria-hidden="true">VS</div>
+        <div>
+          <h1>VayuShield</h1>
+          <p class="subtitle">Urban Air Quality Assistant for Winter Smog Protection &amp; Low-Emission Living</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn" id="openDocsBtn">Architecture &amp; Docs</button>
+        <button type="button" class="btn" id="openTestsBtn">Self-Tests</button>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <div class="grid-2">
+        <!-- Left Card: Air Quality & Winter Smog Telemetry -->
+        <section class="card" aria-labelledby="aqi-heading">
+          <h2 id="aqi-heading">
+            <span>Winter Smog &amp; AQI Monitor</span>
+            <span class="badge-mode" id="riskBadge">Severe</span>
+          </h2>
+
+          <div class="row-inline">
+            <div class="field">
+              <label for="cityPreset">City Winter Preset</label>
+              <select id="cityPreset">
+                <option value="delhi" selected>New Delhi (Winter Inversion)</option>
+                <option value="kolkata">Kolkata (Urban Haze)</option>
+                <option value="mumbai">Mumbai (Coastal Winter Drift)</option>
+                <option value="bengaluru">Bengaluru (Traffic Corridor)</option>
+                <option value="custom">Custom Sensor Reading</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="customAqi">AQI Value (0–999)</label>
+              <input id="customAqi" type="number" min="0" max="999" value="385" />
+            </div>
+          </div>
+          <div class="error-text" id="aqiError" role="alert"></div>
+
+          <div class="aqi-banner" aria-live="polite">
+            <div>
+              <div class="metric-label">Active AQI</div>
+              <div class="aqi-number" id="displayAqi">385</div>
+            </div>
+            <div>
+              <span class="status-pill" id="categoryPill" style="background: var(--severe);">Severe</span>
+              <div class="helper-text" id="healthSummary">Limit outdoor exposure; seal gaps and run HEPA filtration.</div>
+            </div>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-box">
+              <div class="metric-label">Est. PM2.5 (µg/m³)</div>
+              <div class="metric-val" id="pm25Val">246</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-label">Est. PM10 (µg/m³)</div>
+              <div class="metric-val" id="pm10Val">365</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-label">Peak Smog Window</div>
+              <div class="metric-val" id="peakWindowVal">06:00–10:00</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right Card: Family Profile & AI Configuration -->
+        <section class="card" aria-labelledby="profile-heading">
+          <h2 id="profile-heading">
+            <span>Household &amp; Routine Profile</span>
+            <span class="badge-mode" id="engineStatus">Deterministic + Gemini Ready</span>
+          </h2>
+
+          <div class="field">
+            <span class="field" style="display:block; font-size:0.88rem; font-weight:600; margin-bottom:6px; color:#cfe0ef;">
+              Household Sensitivity &amp; Needs
+            </span>
+            <div class="chip-group" id="sensitivityGroup">
+              <label class="chip"><input type="checkbox" value="children" checked /> Infants / Kids</label>
+              <label class="chip"><input type="checkbox" value="elderly" checked /> Elderly</label>
+              <label class="chip"><input type="checkbox" value="asthma" /> Asthma / Respiratory</label>
+              <label class="chip"><input type="checkbox" value="pets" /> Pets</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field" style="display:block; font-size:0.88rem; font-weight:600; margin-bottom:6px; color:#cfe0ef;">
+              Home Air Setup &amp; Habits
+            </span>
+            <div class="chip-group" id="homeSetupGroup">
+              <label class="chip"><input type="checkbox" value="hepa" checked /> HEPA Purifier</label>
+              <label class="chip"><input type="checkbox" value="cross_vent" /> Cross Ventilation</label>
+              <label class="chip"><input type="checkbox" value="indoor_plants" /> Indoor Plants</label>
+              <label class="chip"><input type="checkbox" value="gas_stove" checked /> Gas Cooking</label>
+            </div>
+          </div>
+
+          <div class="row-inline">
+            <div class="field">
+              <label for="commuteMode">Primary Daily Commute</label>
+              <select id="commuteMode">
+                <option value="public_transit" selected>Metro / Bus / Walk</option>
+                <option value="two_wheeler">Two-Wheeler</option>
+                <option value="car">Private Car</option>
+                <option value="remote">Mostly Indoors / Study</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="geminiKey">Gemini API Key (Optional)</label>
+              <input id="geminiKey" type="password" placeholder="Paste key for live AI plan" autocomplete="off" />
+            </div>
+          </div>
+          <p class="helper-text">
+            Key stays in memory only (never saved to storage). Without a key, VayuShield runs its deterministic winter smog engine.
+          </p>
+
+          <div class="row-inline" style="margin-top: 10px;">
+            <button type="button" class="btn btn-primary" id="generatePlanBtn">Generate Family Action Plan</button>
+            <button type="button" class="btn" id="resetDefaultsBtn">Reset Defaults</button>
+          </div>
+          <div class="error-text" id="planError" role="alert"></div>
+        </section>
+      </div>
+
+      <!-- Personalized Plan & Interactive Daily Shield Checklist -->
+      <div class="grid-2">
+        <section class="card" aria-labelledby="plan-heading">
+          <h2 id="plan-heading">
+            <span>Personalized Smog Action Plan</span>
+            <span class="badge-mode" id="planSourceBadge">Rule Engine</span>
+          </h2>
+
+          <div class="plan-section" style="margin-top: 4px; padding-top: 0; border-top: none;">
+            <h3>Low-Emission Daily Routine</h3>
+            <ul class="clean-list" id="routineList"></ul>
+          </div>
+
+          <div class="plan-section">
+            <h3>Indoor Air Hacks</h3>
+            <ul class="clean-list" id="hacksList"></ul>
+          </div>
+
+          <div class="plan-section">
+            <h3>Household Safety Guardrails</h3>
+            <ul class="clean-list" id="safetyList"></ul>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="checklist-heading">
+          <h2 id="checklist-heading">
+            <span>Daily Smog Shield Checklist</span>
+            <span class="badge-mode" id="checklistCount">0 / 0 Done</span>
+          </h2>
+
+          <div class="progress-wrap" aria-hidden="true">
+            <div class="progress-fill" id="checklistProgress"></div>
+          </div>
+
+          <div id="checklistContainer" aria-live="polite"></div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <span>VayuShield MVP • Built for winter urban air resilience</span>
+      <span>Advisory guidance only — consult a doctor for medical symptoms</span>
+    </footer>
+  </div>
+
+  <!-- Documentation Modal -->
+  <dialog id="docsDialog" aria-labelledby="docsTitle">
+    <div class="dialog-head">
+      <h2 id="docsTitle">Architecture &amp; Documentation</h2>
+      <button type="button" class="btn" id="closeDocsBtn">Close</button>
+    </div>
+    <p><strong>Problem Statement:</strong> Help urban families reduce winter smog exposure using personalized low-emission routines and practical indoor air hacks.</p>
+    <p><strong>Hybrid GenAI + Deterministic Design:</strong> When a Gemini API key is provided in memory, VayuShield calls <code>gemini-3-flash-preview</code> with a strict JSON schema. If no key is supplied or a network/API error occurs, it falls back deterministically to structured AQI and household rules so core functionality never breaks.</p>
+    <p><strong>Security &amp; Privacy:</strong> No secrets are hardcoded in source code; API keys are never persisted to <code>localStorage</code> or <code>sessionStorage</code>; all rendered text uses safe DOM text insertion rather than raw HTML injection.</p>
+    <p><strong>Accessibility &amp; Quality:</strong> Includes skip navigation, semantic landmarks, <code>aria-live</code> status updates, keyboard focus rings, input bounds validation, and an automated unit test runner.</p>
+  </dialog>
+
+  <!-- Self-Tests Modal -->
+  <dialog id="testsDialog" aria-labelledby="testsTitle">
+    <div class="dialog-head">
+      <h2 id="testsTitle">Automated Unit Self-Tests</h2>
+      <button type="button" class="btn" id="closeTestsBtn">Close</button>
+    </div>
+    <p id="testSummary" class="helper-text"></p>
+    <ul class="clean-list" id="testResultsList"></ul>
+  </dialog>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const CITY_PRESETS = {
+        delhi: { aqi: 385, peak: "06:00–10:00" },
+        kolkata: { aqi: 245, peak: "06:30–09:30" },
+        mumbai: { aqi: 168, peak: "07:00–09:30" },
+        bengaluru: { aqi: 112, peak: "08:00–10:30" },
+        custom: { aqi: 385, peak: "06:00–10:00" }
+      };
+
+      const state = {
+        city: "delhi",
+        aqi: 385,
+        peakWindow: "06:00–10:00",
+        sensitivities: ["children", "elderly"],
+        homeSetup: ["hepa", "gas_stove"],
+        commute: "public_transit",
+        plan: null,
+        checklist: []
+      };
+
+      const els = {
+        cityPreset: document.getElementById("cityPreset"),
+        customAqi: document.getElementById("customAqi"),
+        aqiError: document.getElementById("aqiError"),
+        displayAqi: document.getElementById("displayAqi"),
+        categoryPill: document.getElementById("categoryPill"),
+        riskBadge: document.getElementById("riskBadge"),
+        healthSummary: document.getElementById("healthSummary"),
+        pm25Val: document.getElementById("pm25Val"),
+        pm10Val: document.getElementById("pm10Val"),
+        peakWindowVal: document.getElementById("peakWindowVal"),
+        sensitivityGroup: document.getElementById("sensitivityGroup"),
+        homeSetupGroup: document.getElementById("homeSetupGroup"),
+        commuteMode: document.getElementById("commuteMode"),
+        geminiKey: document.getElementById("geminiKey"),
+        generatePlanBtn: document.getElementById("generatePlanBtn"),
+        resetDefaultsBtn: document.getElementById("resetDefaultsBtn"),
+        planError: document.getElementById("planError"),
+        engineStatus: document.getElementById("engineStatus"),
+        planSourceBadge: document.getElementById("planSourceBadge"),
+        routineList: document.getElementById("routineList"),
+        hacksList: document.getElementById("hacksList"),
+        safetyList: document.getElementById("safetyList"),
+        checklistContainer: document.getElementById("checklistContainer"),
+        checklistCount: document.getElementById("checklistCount"),
+        checklistProgress: document.getElementById("checklistProgress"),
+        openDocsBtn: document.getElementById("openDocsBtn"),
+        closeDocsBtn: document.getElementById("closeDocsBtn"),
+        docsDialog: document.getElementById("docsDialog"),
+        openTestsBtn: document.getElementById("openTestsBtn"),
+        closeTestsBtn: document.getElementById("closeTestsBtn"),
+        testsDialog: document.getElementById("testsDialog"),
+        testSummary: document.getElementById("testSummary"),
+        testResultsList: document.getElementById("testResultsList")
+      };
+
+      function classifyAqi(aqi) {
+        const val = Number(aqi);
+        if (!Number.isFinite(val) || val < 0) {
+          return { label: "Invalid", color: "#94a3b8", advice: "Enter a valid AQI between 0 and 999." };
+        }
+        if (val <= 50) {
+          return { label: "Good", color: "var(--good)", advice: "Clean air conditions; normal outdoor routines are safe." };
+        }
+        if (val <= 150) {
+          return { label: "Moderate", color: "var(--moderate)", advice: "Sensitive groups should pace prolonged outdoor exertion." };
+        }
+        if (val <= 250) {
+          return { label: "Poor", color: "var(--poor)", advice: "Cut outdoor exercise and keep indoor air sealed during peak hours." };
+        }
+        return { label: "Severe", color: "var(--severe)", advice: "Avoid outdoor activity; seal leaks, run filtration, and wear fitted masks." };
+      }
+
+      function estimateParticulates(aqi) {
+        const cleanAqi = Math.max(0, Math.min(999, Number(aqi) || 0));
+        const pm25 = Math.round(cleanAqi * 0.64);
+        const pm10 = Math.round(cleanAqi * 0.95);
+        return { pm25, pm10 };
+      }
+
+      function validateAqiInput(rawValue) {
+        if (rawValue === "" || rawValue === null || rawValue === undefined) {
+          return { valid: false, message: "AQI cannot be empty. Enter a number from 0 to 999." };
+        }
+        const num = Number(rawValue);
+        if (!Number.isInteger(num) || num < 0 || num > 999) {
+          return { valid: false, message: "Please enter a whole number between 0 and 999." };
+        }
+        return { valid: true, value: num, message: "" };
+      }
+
+      function getCheckedValues(container) {
+        return Array.from(container.querySelectorAll('input[type="checkbox"]:checked')).map((cb) => cb.value);
+      }
+
+      function setCheckedValues(container, values) {
+        const set = new Set(values);
+        container.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
+          cb.checked = set.has(cb.value);
+        });
+      }
+
+      function buildDeterministicPlan(input) {
+        const info = classifyAqi(input.aqi);
+        const routine = [];
+        const hacks = [];
+        const safety = [];
+
+        if (input.aqi >= 250) {
+          routine.push(`Avoid outdoor walks and errands during winter inversion peak (${input.peakWindow}); shift movement to midday warmth if AQI dips.`);
+        } else if (input.aqi >= 150) {
+          routine.push(`Keep brisk outdoor sessions under 30 minutes and avoid busy arterial roads between ${input.peakWindow}.`);
+        } else {
+          routine.push(`Enjoy morning or evening routines while keeping an eye on evening temperature drops and traffic spikes.`);
+        }
+
+        if (input.commute === "two_wheeler") {
+          routine.push("Wear a snug-fitting N95/FFP2 respirator on two-wheeler trips and avoid idling behind buses or trucks.");
+        } else if (input.commute === "car") {
+          routine.push("Keep car windows shut and switch cabin AC to recirculate mode when driving through congested corridors.");
+        } else if (input.commute === "public_transit") {
+          routine.push("Walk shaded or low-traffic side streets to stations and carry a compact mask for crowded platforms.");
+        } else {
+          routine.push("Batch necessary errands into a single trip and keep study/work zones away from street-facing drafts.");
+        }
+
+        if (input.homeSetup.includes("hepa")) {
+          hacks.push("Run your HEPA purifier continuously on medium/high in the bedroom and living room with doors closed.");
+        } else {
+          hacks.push("No HEPA unit selected: build a low-cost box-fan + MERV-13/HEPA filter setup or designate one tightly sealed 'clean room'.");
+        }
+
+        if (input.homeSetup.includes("cross_vent")) {
+          hacks.push("Pause cross-ventilation during high-smog hours; if airing out rooms briefly, do it only during the cleanest afternoon window.");
+        } else {
+          hacks.push("Check door sweeps and window weatherstripping to block cold winter drafts carrying fine PM2.5 indoors.");
+        }
+
+        if (input.homeSetup.includes("gas_stove")) {
+          hacks.push("Turn on the kitchen exhaust hood or crack a high window slightly while cooking on gas, and favor pressure cooking or simmering.");
+        }
+
+        if (input.homeSetup.includes("indoor_plants")) {
+          hacks.push("Treat indoor plants as decor and humidity helpers rather than primary air cleaners—pair them with mechanical filtration.");
+        }
+
+        hacks.push("Wipe dusty hard surfaces with a damp microfiber cloth instead of dry sweeping so settled particles do not re-enter the air.");
+
+        if (input.sensitivities.includes("children")) {
+          safety.push("Keep infants and young children indoors during high-smog advisories; avoid stroller exposure near roadside exhaust.");
+        }
+        if (input.sensitivities.includes("elderly")) {
+          safety.push("Monitor older family members for unusual fatigue, chest tightness, or dizziness and keep warm indoor temperatures steady.");
+        }
+        if (input.sensitivities.includes("asthma")) {
+          safety.push("Keep prescribed rescue inhalers accessible at all times and seek medical care promptly if wheezing or shortness of breath worsens.");
+        }
+        if (input.sensitivities.includes("pets")) {
+          safety.push("Keep pets indoors during severe smog and wipe paws with a damp cloth after brief outdoor potty breaks.");
+        }
+        if (safety.length === 0) {
+          safety.push(`Current risk level is ${info.label}: stay hydrated, use a properly sealed respirator when AQI exceeds 150, and monitor symptoms.`);
+        }
+
+        const checklist = [
+          { id: "seal_gaps", text: "Check window latches and door gaps before evening smog builds", done: false },
+          { id: "filter_check", text: input.homeSetup.includes("hepa") ? "Run HEPA purifier and check filter dust load" : "Set up clean-room airflow and seal drafty vents", done: false },
+          { id: "damp_wipe", text: "Damp-wipe tabletops and floors instead of dry dusting", done: false },
+          { id: "mask_ready", text: "Pack a well-fitted N95/FFP2 mask before heading out", done: false },
+          { id: "kitchen_vent", text: input.homeSetup.includes("gas_stove") ? "Ventilate kitchen during cooking and avoid burning incense/candles" : "Avoid indoor smoke, incense, or agarbatti during smog days", done: false }
+        ];
+
+        return {
+          source: "Deterministic Engine",
+          routine,
+          hacks,
+          safety,
+          checklist
+        };
+      }
+
+      async function generateGeminiPlan(input, apiKey) {
+        const endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent";
+        const prompt = [
+          "You are VayuShield, an urban air quality assistant for families facing winter smog.",
+          `City: ${input.city}, AQI: ${input.aqi}, Peak smog window: ${input.peakWindow}.`,
+          `Household sensitivities: ${input.sensitivities.join(", ") || "none"}.`,
+          `Home setup: ${input.homeSetup.join(", ") || "standard"}.`,
+          `Commute mode: ${input.commute}.`,
+          "Return concise, practical, non-medical advice tailored to this household."
+        ].join(" ");
+
+        const body = {
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: "OBJECT",
+              properties: {
+                routine: { type: "ARRAY", items: { type: "STRING" } },
+                hacks: { type: "ARRAY", items: { type: "STRING" } },
+                safety: { type: "ARRAY", items: { type: "STRING" } },
+                checklist: { type: "ARRAY", items: { type: "STRING" } }
+              },
+              required: ["routine", "hacks", "safety", "checklist"]
+            }
+          }
+        };
+
+        const maxAttempts = 3;
+        let lastError = null;
+
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+          try {
+            const res = await fetch(endpoint, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "x-goog-api-key": apiKey
+              },
+              body: JSON.stringify(body)
+            });
+
+            if (!res.ok) {
+              throw new Error("Gemini API returned status " + res.status);
+            }
+
+            const data = await res.json();
+            const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!rawText) {
+              throw new Error("Empty response from Gemini API");
+            }
+
+            const parsed = JSON.parse(rawText);
+            if (!Array.isArray(parsed.routine) || !Array.isArray(parsed.hacks) || !Array.isArray(parsed.safety)) {
+              throw new Error("Malformed structured output");
+            }
+
+            const checklistItems = (Array.isArray(parsed.checklist) && parsed.checklist.length > 0
+              ? parsed.checklist
+              : buildDeterministicPlan(input).checklist.map((c) => c.text)
+            ).slice(0, 6).map((text, idx) => ({
+              id: "ai_task_" + idx,
+              text: String(text),
+              done: false
+            }));
+
+            return {
+              source: "Gemini 3 Flash",
+              routine: parsed.routine.map(String),
+              hacks: parsed.hacks.map(String),
+              safety: parsed.safety.map(String),
+              checklist: checklistItems
+            };
+          } catch (err) {
+            lastError = err;
+            if (attempt < maxAttempts - 1) {
+              const delayMs = 400 * Math.pow(2, attempt);
+              await new Promise((resolve) => setTimeout(resolve, delayMs));
+            }
+          }
+        }
+
+        throw lastError || new Error("Gemini request failed");
+      }
+
+      function renderList(ulEl, items) {
+        ulEl.textContent = "";
+        items.forEach((item) => {
+          const li = document.createElement("li");
+          li.textContent = item;
+          ulEl.appendChild(li);
+        });
+      }
+
+      function renderTelemetry() {
+        const info = classifyAqi(state.aqi);
+        const { pm25, pm10 } = estimateParticulates(state.aqi);
+
+        els.displayAqi.textContent = String(state.aqi);
+        els.categoryPill.textContent = info.label;
+        els.categoryPill.style.background = info.color;
+        els.riskBadge.textContent = info.label;
+        els.healthSummary.textContent = info.advice;
+        els.pm25Val.textContent = String(pm25);
+        els.pm10Val.textContent = String(pm10);
+        els.peakWindowVal.textContent = state.peakWindow;
+      }
+
+      function renderChecklist() {
+        els.checklistContainer.textContent = "";
+        const total = state.checklist.length;
+        const completed = state.checklist.filter((item) => item.done).length;
+        const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        els.checklistCount.textContent = `${completed} / ${total} Done`;
+        els.checklistProgress.style.width = `${pct}%`;
+
+        state.checklist.forEach((item) => {
+          const row = document.createElement("label");
+          row.className = "checklist-item" + (item.done ? " done" : "");
+
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = item.done;
+          checkbox.addEventListener("change", () => {
+            item.done = checkbox.checked;
+            renderChecklist();
+          });
+
+          const span = document.createElement("span");
+          span.textContent = item.text;
+
+          row.appendChild(checkbox);
+          row.appendChild(span);
+          els.checklistContainer.appendChild(row);
+        });
+      }
+
+      function renderPlan() {
+        if (!state.plan) return;
+        els.planSourceBadge.textContent = state.plan.source;
+        renderList(els.routineList, state.plan.routine);
+        renderList(els.hacksList, state.plan.hacks);
+        renderList(els.safetyList, state.plan.safety);
+        renderChecklist();
+      }
+
+      async function handleGeneratePlan() {
+        els.planError.textContent = "";
+        const validation = validateAqiInput(els.customAqi.value);
+        if (!validation.valid) {
+          els.aqiError.textContent = validation.message;
+          els.planError.textContent = "Fix the AQI input before generating a plan.";
+          return;
+        }
+        els.aqiError.textContent = "";
+
+        state.aqi = validation.value;
+        state.city = els.cityPreset.value;
+        state.peakWindow = CITY_PRESETS[state.city]?.peak || "06:00–10:00";
+        state.sensitivities = getCheckedValues(els.sensitivityGroup);
+        state.homeSetup = getCheckedValues(els.homeSetupGroup);
+        state.commute = els.commuteMode.value;
+        renderTelemetry();
+
+        const apiKey = els.geminiKey.value.trim();
+        if (!apiKey) {
+          state.plan = buildDeterministicPlan(state);
+          state.checklist = state.plan.checklist.map((c) => ({ ...c }));
+          els.engineStatus.textContent = "Deterministic Mode";
+          renderPlan();
+          return;
+        }
+
+        els.generatePlanBtn.disabled = true;
+        els.engineStatus.textContent = "Calling Gemini...";
+        try {
+          state.plan = await generateGeminiPlan(state, apiKey);
+          state.checklist = state.plan.checklist.map((c) => ({ ...c }));
+          els.engineStatus.textContent = "Gemini Active";
+        } catch (err) {
+          state.plan = buildDeterministicPlan(state);
+          state.checklist = state.plan.checklist.map((c) => ({ ...c }));
+          els.engineStatus.textContent = "Fallback Active";
+          els.planError.textContent = "Live AI call unavailable; used deterministic winter smog plan.";
+        } finally {
+          els.generatePlanBtn.disabled = false;
+          renderPlan();
+        }
+      }
+
+      function runSelfTests() {
+        const results = [];
+        function assert(name, condition) {
+          results.push({ name, passed: Boolean(condition) });
+        }
+
+        assert("Good AQI (35) classified as Good", classifyAqi(35).label === "Good");
+        assert("Moderate AQI (120) classified as Moderate", classifyAqi(120).label === "Moderate");
+        assert("Poor AQI (200) classified as Poor", classifyAqi(200).label === "Poor");
+        assert("Severe AQI (410) classified as Severe", classifyAqi(410).label === "Severe");
+        assert("Rejects negative AQI (-5)", validateAqiInput("-5").valid === false);
+        assert("Rejects AQI above 999 (1200)", validateAqiInput("1200").valid === false);
+        assert("Accepts valid AQI (385)", validateAqiInput("385").valid === true && validateAqiInput("385").value === 385);
+
+        const samplePlan = buildDeterministicPlan({
+          city: "delhi",
+          aqi: 390,
+          peakWindow: "06:00–10:00",
+          sensitivities: ["asthma"],
+          homeSetup: ["gas_stove"],
+          commute: "two_wheeler"
+        });
+        assert("Deterministic plan generates routine, hacks, safety, and checklist",
+          samplePlan.routine.length > 0 &&
+          samplePlan.hacks.length > 0 &&
+          samplePlan.safety.length > 0 &&
+          samplePlan.checklist.length >= 4
+        );
+
+        const passedCount = results.filter((r) => r.passed).length;
+        els.testSummary.textContent = `${passedCount} / ${results.length} unit assertions passed.`;
+        els.testResultsList.textContent = "";
+        results.forEach((r) => {
+          const li = document.createElement("li");
+          li.className = r.passed ? "test-pass" : "test-fail";
+          li.textContent = `${r.passed ? "PASS" : "FAIL"}: ${r.name}`;
+          els.testResultsList.appendChild(li);
+        });
+      }
+
+      // Event Listeners
+      els.cityPreset.addEventListener("change", () => {
+        const selected = els.cityPreset.value;
+        state.city = selected;
+        if (selected !== "custom" && CITY_PRESETS[selected]) {
+          state.aqi = CITY_PRESETS[selected].aqi;
+          state.peakWindow = CITY_PRESETS[selected].peak;
+          els.customAqi.value = String(state.aqi);
+          els.aqiError.textContent = "";
+          renderTelemetry();
+        }
+      });
+
+      els.customAqi.addEventListener("input", () => {
+        const check = validateAqiInput(els.customAqi.value);
+        if (check.valid) {
+          els.aqiError.textContent = "";
+          state.aqi = check.value;
+          if (els.cityPreset.value !== "custom") {
+            els.cityPreset.value = "custom";
+            state.city = "custom";
+          }
+          renderTelemetry();
+        } else {
+          els.aqiError.textContent = check.message;
+        }
+      });
+
+      els.generatePlanBtn.addEventListener("click", handleGeneratePlan);
+
+      els.resetDefaultsBtn.addEventListener("click", () => {
+        els.cityPreset.value = "delhi";
+        els.customAqi.value = "385";
+        els.aqiError.textContent = "";
+        els.planError.textContent = "";
+        els.geminiKey.value = "";
+        els.commuteMode.value = "public_transit";
+        setCheckedValues(els.sensitivityGroup, ["children", "elderly"]);
+        setCheckedValues(els.homeSetupGroup, ["hepa", "gas_stove"]);
+
+        state.city = "delhi";
+        state.aqi = 385;
+        state.peakWindow = CITY_PRESETS.delhi.peak;
+        state.sensitivities = ["children", "elderly"];
+        state.homeSetup = ["hepa", "gas_stove"];
+        state.commute = "public_transit";
+        state.plan = buildDeterministicPlan(state);
+        state.checklist = state.plan.checklist.map((c) => ({ ...c }));
+        els.engineStatus.textContent = "Deterministic + Gemini Ready";
+
+        renderTelemetry();
+        renderPlan();
+      });
+
+      els.openDocsBtn.addEventListener("click", () => {
+        if (typeof els.docsDialog.showModal === "function") {
+          els.docsDialog.showModal();
+        }
+      });
+
+      els.closeDocsBtn.addEventListener("click", () => els.docsDialog.close());
+
+      els.openTestsBtn.addEventListener("click", () => {
+        runSelfTests();
+        if (typeof els.testsDialog.showModal === "function") {
+          els.testsDialog.showModal();
+        }
+      });
+
+      els.closeTestsBtn.addEventListener("click", () => els.testsDialog.close());
+
+      // Initial render
+      renderTelemetry();
+      state.plan = buildDeterministicPlan(state);
+      state.checklist = state.plan.checklist.map((c) => ({ ...c }));
+      renderPlan();
+    })();
+  </script>
+</body>
+</html>
 
